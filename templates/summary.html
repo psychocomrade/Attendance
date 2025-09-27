@@ -1,17 +1,18 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Attendance Summary</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <h2>📋 Attendance Summary</h2>
-    <textarea id="summary" style="width:100%; height:300px;">{{ summary }}</textarea><br><br>
+<header>📋 Attendance Summary</header>
+<main>
+    <textarea id="summary">{{ summary }}</textarea>
     <button onclick="copyToClipboard()">📋 Copy for WhatsApp</button>
-    <br><br>
     <a href="/reset">🔄 Reset Today’s Attendance</a>
-    <br><br>
     <a href="/">⬅ Back to Attendance</a>
+</main>
 
 <script>
 function copyToClipboard() {
@@ -24,4 +25,3 @@ function copyToClipboard() {
 </script>
 </body>
 </html>
-
