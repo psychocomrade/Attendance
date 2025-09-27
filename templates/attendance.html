@@ -1,16 +1,18 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Attendance</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <h2>📅 Attendance Register</h2>
+<header>📅 Attendance</header>
+<main>
     <form method="post">
         <label>Date:</label>
-        <input type="text" name="date" value="{{ today }}" readonly><br><br>
+        <input type="text" name="date" value="{{ today }}" readonly>
 
-        <label>Enable OT Today <input type="checkbox" id="enable_ot" name="enable_ot" onchange="toggleOT()"></label><br><br>
+        <label>Enable OT Today <input type="checkbox" id="enable_ot" name="enable_ot" onchange="toggleOT()"></label>
 
         {% for worker in workers %}
             <div class="worker-card">
@@ -28,34 +30,35 @@
             </div>
         {% endfor %}
 
-        <button type="submit">Submit Attendance</button>
-    </form>
-    <br>
-    <a href="/onboard">➕ Onboard Worker</a>
-<!-- Add at the top of attendance.html -->
-<h3>👤 Edit Workers</h3>
-<button type="button" onclick="toggleEdit()">✏️ Show / Hide Edit Workers</button>
-
-<div id="edit_workers" style="display:none; margin-top:10px;">
-    {% for worker in workers %}
-        <div style="margin-bottom:5px;">
-            {{ worker[1] }} ({{ worker[2] }})
-            <form method="post" action="/delete_worker" style="display:inline;" onsubmit="return confirm('Delete this worker?');">
-                <input type="hidden" name="worker_id" value="{{ worker[0] }}">
-                <button type="submit">🗑️ Delete</button>
-            </form>
+        <div class="floating-submit">
+            <button type="submit">Submit Attendance</button>
         </div>
-    {% endfor %}
-</div>
+    </form>
+
+    <a href="/onboard">➕ Onboard Worker</a>
+
+    <h3>👤 Edit Workers</h3>
+    <button type="button" onclick="toggleEdit()">✏️ Show / Hide Edit Workers</button>
+
+    <div id="edit_workers" style="display:none;">
+        {% for worker in workers %}
+            <div>
+                {{ worker[1] }} ({{ worker[2] }})
+                <form method="post" action="/delete_worker" style="display:inline;" onsubmit="return confirm('Delete this worker?');">
+                    <input type="hidden" name="worker_id" value="{{ worker[0] }}">
+                    <button type="submit">🗑️ Delete</button>
+                </form>
+            </div>
+        {% endfor %}
+    </div>
+</main>
 
 <script>
 function toggleEdit() {
     const div = document.getElementById("edit_workers");
     div.style.display = div.style.display === "none" ? "block" : "none";
 }
-</script>
 
-<script>
 function toggleOT() {
     let enabled = document.getElementById("enable_ot").checked;
     {% for worker in workers %}
@@ -72,4 +75,3 @@ function toggleHours(worker_id){
 </script>
 </body>
 </html>
-
