@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Attendance</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h2>📅 Attendance Register</h2>
+    <form method="post">
+        <label>Date:</label>
+        <input type="text" name="date" value="{{ today }}" readonly><br><br>
+
+        <label>Enable OT Today <input type="checkbox" id="enable_ot" name="enable_ot" onchange="toggleOT()"></label><br><br>
+
+        {% for worker in workers %}
+            <div class="worker-card">
+                <b>{{ worker[1] }}</b> ({{ worker[2] }})
+                <label>Present <input type="checkbox" name="present_{{ worker[0] }}"></label>
+                <div id="ot_block_{{ worker[0] }}" style="display:none; margin-top:5px;">
+                    <label>OT <input type="checkbox" name="ot_{{ worker[0] }}" onchange="toggleHours({{ worker[0] }})"></label>
+                    <select name="hours_{{ worker[0] }}" id="hours_{{ worker[0] }}" style="display:none;">
+                        {% for i in range(1,13) %}
+                            <option value="{{ i*0.5 }}">{{ i*0.5 }} hr</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <input type="hidden" name="worker_id" value="{{ worker[0] }}">
+            </div>
+        {% endfor %}
+
+        <button type="submit">Submit Attendance</button>
+    </form>
+    <br>
+    <a href="/onboard">➕ Onboard Worker</a>
+<!-- Add at the top of attendance.html -->
+<h3>👤 Edit Workers</h3>
+<button type="button" onclick="toggleEdit()">✏️ Show / Hide Edit Workers</button>
+
+<div id="edit_workers" style="display:none; margin-top:10px;">
+    {% for worker in workers %}
+        <div style="margin-bottom:5px;">
+            {{ worker[1] }} ({{ worker[2] }})
+            <form method="post" action="/delete_worker" style="display:inline;" onsubmit="return confirm('Delete this worker?');">
+                <input type="hidden" name="worker_id" value="{{ worker[0] }}">
+                <button type="submit">🗑️ Delete</button>
+            </form>
+        </div>
+    {% endfor %}
+</div>
+
+<script>
+function toggleEdit() {
+    const div = document.getElementById("edit_workers");
+    div.style.display = div.style.display === "none" ? "block" : "none";
+}
+</script>
+
+<script>
+function toggleOT() {
+    let enabled = document.getElementById("enable_ot").checked;
+    {% for worker in workers %}
+        document.getElementById("ot_block_{{ worker[0] }}").style.display = enabled ? "block" : "none";
+        if(!enabled) document.getElementById("hours_{{ worker[0] }}").style.display = "none";
+    {% endfor %}
+}
+
+function toggleHours(worker_id){
+    let ot_check = document.querySelector(`[name='ot_${worker_id}']`);
+    let hours_select = document.getElementById(`hours_${worker_id}`);
+    hours_select.style.display = ot_check.checked ? "inline-block" : "none";
+}
+</script>
+</body>
+</html>
+
